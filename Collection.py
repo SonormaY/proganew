@@ -58,9 +58,10 @@ class Collection:
     def print_to_csv(self):
         user_input = input("Enter file name: ")
         with open(user_input, 'w', newline = '') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=['name', 'surname', 'department', 'salary'])
+            writer = csv.DictWriter(csvfile, fieldnames=['id', 'name', 'surname', 'department', 'salary'])
             for worker in self.collection:
                 writer.writerow({
+                    'id': worker.get_id(),
                     'name': worker.name,
                     'surname': worker.surname,
                     'department': worker.department,
