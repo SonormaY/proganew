@@ -1,4 +1,5 @@
 from Worker import Worker
+import decorators
 import csv
 
 class Collection:
@@ -71,3 +72,15 @@ class Collection:
     def print_workers(self):
         for worker in self.collection:
             print(worker)
+
+    @decorators.sort_decorator
+    def sort_workers(self, key):
+        self.collection.sort(key = lambda x: getattr(x, key))
+    
+    @decorators.search_decorator
+    def search_workers(self, key):
+        return list(filter(lambda x: x.name.casefold() == key.casefold() 
+                           or x.surname.casefold() == key .casefold()
+                           or x.department.casefold() == key.casefold()
+                           or x.salary.casefold() == key.casefold(),
+                           self.collection))
