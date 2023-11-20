@@ -27,9 +27,17 @@ while True:
         workers.print_workers()
         input("Press enter to continue...")
     elif n == "2":
-        workers.add_worker()
+        try:
+            workers.add_worker()
+        except ValueError as e:
+            print(e)
+            input("Press enter to continue...")
     elif n == "3":
-        workers.delete_worker()
+        try:
+            workers.delete_worker()
+        except ValueError as e:
+            print(e)
+            input("Press enter to continue...")
     elif n == "4":
         workers.edit_worker()
     elif n == "5":

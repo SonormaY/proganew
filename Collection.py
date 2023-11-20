@@ -2,21 +2,29 @@ from Worker import Worker
 import decorators
 import csv
 
+def id_generator():
+    num = 1
+    while num < 10**3:
+        yield num
+        num += 1
+
 class Collection:
     def __init__(self):
         self.collection = []
+        self.id_generator = id_generator()
 
     def read_from_csv(self):
         user_input = input("Enter file name: ")
-        with open(user_input, newline = '') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                worker = Worker(row['name'], row['surname'], row['department'], row['salary'])
-                if len(self.collection) != 0:
-                    worker.set_id(self.collection[-1].get_id() + 1)
-                else:
-                    worker.set_id(1)
-                self.collection.append(worker)
+        try:
+            with open(user_input, newline = '') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    worker = Worker(row['name'], row['surname'], row['department'], row['salary'])
+                    worker.set_id(next(self.id_generator))
+                    self.collection.append(worker)
+        except FileNotFoundError:
+            print("File not found")
+            return
 
     def delete_worker(self):
         user_input = int(input("Enter ID: "))
@@ -24,6 +32,7 @@ class Collection:
             if worker.get_id() == user_input:
                 self.collection.remove(worker)
                 return
+        raise ValueError("Worker not found")
     
     def add_worker(self):
         worker = Worker(
@@ -32,10 +41,10 @@ class Collection:
             input("Enter department: "),
             input("Enter salary: ")
         )
-        if len(self.collection) != 0:
-            worker.set_id(self.collection[-1].get_id() + 1)
-        else:
-            worker.set_id(1)
+        if not worker.salary.isnumeric() or int(worker.salary) < 0:
+            raise ValueError("Salary must be positive number")
+            return
+        worker.set_id(next(self.id_generator))
         self.collection.append(worker)
 
     def edit_worker(self):
