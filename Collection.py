@@ -1,3 +1,4 @@
+from hmac import new
 from Worker import Worker
 import decorators
 import csv
@@ -13,10 +14,11 @@ class Collection:
         self.collection = []
         self.id_generator = id_generator()
 
-    def read_from_csv(self):
-        user_input = input("Enter file name: ")
+    def read_from_csv(self, filename = None):
+        if filename is None:
+            filename = input("Enter file name: ")
         try:
-            with open(user_input, newline = '') as csvfile:
+            with open(filename, newline = '') as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
                     worker = Worker(row['name'], row['surname'], row['department'], row['salary'])
@@ -26,48 +28,62 @@ class Collection:
             print("File not found")
             return
 
-    def delete_worker(self):
-        user_input = int(input("Enter ID: "))
+    def delete_worker(self, id = None):
+        if id is None:
+            id = int(input("Enter ID: "))
         for worker in self.collection:
-            if worker.get_id() == user_input:
+            if worker.get_id() == id:
                 self.collection.remove(worker)
                 return
         raise ValueError("Worker not found")
     
-    def add_worker(self):
-        worker = Worker(
-            input("Enter name: "),
-            input("Enter surname: "),
-            input("Enter department: "),
-            input("Enter salary: ")
-        )
+    def add_worker(self, *args):
+        worker = None
+        if len(args) == 4:
+            worker = Worker(*args)
+        else:
+            worker = Worker(
+                input("Enter name: "),
+                input("Enter surname: "),
+                input("Enter department: "),
+                input("Enter salary: ")
+            )
         if not worker.salary.isnumeric() or int(worker.salary) < 0:
             raise ValueError("Salary must be positive number")
-            return
         worker.set_id(next(self.id_generator))
         self.collection.append(worker)
 
-    def edit_worker(self):
-        user_input = int(input("Enter ID: "))
-        choice = input("Field to edit\n1. Name \n2. Surname \n3. Department \n4. Salary\nEnter number: ")
-        if choice not in ["1", "2", "3", "4"]:
-            print("Wrong input")
-            return
+    def edit_worker(self, *args):
+        if len(args) == 3:
+            user_input = args[0]
+            choice = args[1]
+            new_data = args[2]
+        else:
+            user_input = int(input("Enter ID: "))
+            choice = input("Field to edit\n1. name \n2. surname \n3. department \n4. salary\nEnter number: ")
+            new_data = input("Enter new data: ")
+        if choice not in ["name", "surname", "departament", "salary"]:
+            raise Exception("Wrong input")
         paths = {
             "1": "name",
             "2": "surname",
             "3": "department",
-            "4": "salary"
+            "4": "salary",
+            "name": "name",
+            "surname": "surname",
+            "departament": "departament",
+            "salary": "salary"
         }
         setattr(
             self.collection[user_input - 1],
             paths[choice],
-            input("Enter new data: ")
+            new_data
         )
 
-    def print_to_csv(self):
-        user_input = input("Enter file name: ")
-        with open(user_input, 'w', newline = '') as csvfile:
+    def print_to_csv(self, filename = None):
+        if filename is None:
+            filename = input("Enter file name: ")
+        with open(filename, 'w', newline = '') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=['id', 'name', 'surname', 'department', 'salary'])
             for worker in self.collection:
                 writer.writerow({

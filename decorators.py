@@ -1,4 +1,3 @@
-
 def sort_decorator(func):
     def wrapper(*args, **kwargs):
         print(f"Sorting Collection by {args[1]}...")
