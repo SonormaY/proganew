@@ -2,6 +2,7 @@ from hmac import new
 from Worker import Worker
 import decorators
 import csv
+import matplotlib.pyplot as plt
 
 def id_generator():
     num = 1
@@ -97,6 +98,26 @@ class Collection:
     def print_workers(self):
         for worker in self.collection:
             print(worker)
+
+    def plot_workers(self):
+        if len(self.collection) == 0:
+            raise Exception("Collection is empty")
+        department_counts = {}
+        for worker in self.collection:
+            department = worker.department
+            if department in department_counts:
+                department_counts[department] += 1
+            else:
+                department_counts[department] = 1
+        
+        departments = list(department_counts.keys())
+        counts = list(department_counts.values())
+        
+
+        plt.pie(counts, labels=departments, autopct='%1.1f%%')
+        plt.title("Workers by Department")
+        plt.show()
+
 
     @decorators.sort_decorator
     def sort_workers(self, key):
