@@ -1,11 +1,6 @@
-from cProfile import label
-from email import message
-from typing import final
-from numpy import str_
 from Collection import Collection
 from os import system, name
 import unittest
-import matplotlib.pyplot as plt
 import tkinter as tk
 from tkinter import messagebox
 
