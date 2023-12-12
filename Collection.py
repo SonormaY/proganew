@@ -114,7 +114,7 @@ class Collection:
         counts = list(department_counts.values())
         
 
-        plt.pie(counts, labels=departments, autopct='%1.1f%%')
+        plt.pie(counts, labels=departments, autopct='%.1f%%')
         plt.title("Workers by Department")
         plt.show()
 
